@@ -1,0 +1,20 @@
+####
+
+GET SHADER INFO
+
+GLint status;
+glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+
+if (status == GL_FALSE)
+{
+    GLint infoLogLength;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+    GLchar* strInfoLog = new GLchar[infoLogLength + 1];
+    glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
+
+    fprintf(stderr, "Compilation error in shader %s: %s\n", "Shader", strInfoLog);
+    delete[] strInfoLog;
+}
+
+  ######
