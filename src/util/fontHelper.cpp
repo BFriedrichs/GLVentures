@@ -85,13 +85,13 @@ void FontHelper::loadFont() {
     fprintf(stderr, "Could not init freetype library\n");
   }
 
-  FT_New_Face(*this->ft, "/Library/Fonts/Arial.ttf", 0, this->face);
-  setFontSize(10);
+  FT_New_Face(*this->ft, "/System/Library/Fonts/SFNSDisplay.ttf", 0, this->face);
+  setFontSize(this->fontSize);
 }
 
 void FontHelper::setFontSize(int size) {
   this->fontSize = size;
-  FT_Set_Char_Size(*this->face, 0, size*size*4, 500, 500); 
+  FT_Set_Char_Size(*this->face, 0, size*size*4, 300, 300); 
 }
 
 TextImage* FontHelper::renderText(const char* string) {
@@ -141,9 +141,10 @@ TextImage* FontHelper::renderText(const char* string) {
     int heightOffset = result->baseline - bitmapTop;
 
     pixel* old_data = result->image_data;
-    result->image_data = new pixel[newPo2Height * newPo2Width];
+    int size = newPo2Height * newPo2Width;
+    result->image_data = new pixel[size];
 
-    std::fill((uchar*)result->image_data, (uchar*)(result->image_data + sizeof(result->image_data)), 0);
+    std::fill((uchar*)result->image_data, (uchar*)(result->image_data + size), 0);
 
     for(int i = 0; i < result->po2_height; i++) {
       std::memcpy(&result->image_data[newPo2Width * i], &old_data[result->po2_width * i], sizeof(pixel) * result->width);
@@ -168,7 +169,6 @@ TextImage* FontHelper::renderText(const char* string) {
     if(old_data != NULL) {
       delete[] old_data;
     }
-
   }
 
   return result;

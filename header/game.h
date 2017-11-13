@@ -7,10 +7,10 @@ class Game {
     ~Game();
 
     void start();
-    void update();
+    void update(float delta);
     void render();
-    void cursorUpdate(double xpos, double ypos);
-    void keyUpdate(int key, int scancode, int action, int mods);
+    void cursorUpdate(GLFWwindow* window, double xpos, double ypos);
+    void keyUpdate(GLFWwindow* window, int key, int scancode, int action, int mods);
 };
 
 #endif

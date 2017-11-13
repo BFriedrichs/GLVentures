@@ -6,11 +6,13 @@
 #include <GLFW/glfw3.h>
 #include <png.h>
 
+#include <string> 
 #include <vector>
 
-#include "fontHelper.h"
-#include "game.h"
+#include "applicationStore.h"
 
+#include "text.h"
+#include "game.h"
 
 const double maxFPS = 60.0;
 const double maxPeriod = 1.0 / maxFPS;
@@ -18,15 +20,17 @@ double lastTime = 0.0;
 
 double frameTime = glfwGetTime();
 int frames = 0;
+Text* fpsFactory(int fps);
 
+ApplicationStore* _STORE = ApplicationStore::getInstance();
 Game* g;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  g->keyUpdate(key, scancode, action, mods);
+  g->keyUpdate(window, key, scancode, action, mods);
 }
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
-  g->cursorUpdate(xpos, ypos);
+  g->cursorUpdate(window, xpos, ypos);
 }
 
 int main(int argc, char* argv[]) {
@@ -44,7 +48,7 @@ int main(int argc, char* argv[]) {
   
   // Open a window and create its OpenGL context
   GLFWwindow* window; // (In the accompanying source code, this variable is global for simplicity)
-  window = glfwCreateWindow( 1024, 768, "Test", NULL, NULL);
+  window = glfwCreateWindow(_STORE->windowWidth, _STORE->windowHeight, "Test", NULL, NULL);
   if( window == NULL ){
       fprintf( stderr, "Failed to open GLFW window.\n" );
       glfwTerminate();
@@ -119,6 +123,8 @@ int main(int argc, char* argv[]) {
 
   fclose(fp);
   */
+  
+  Text* fpsCounter = fpsFactory(60);
 
   while(!glfwWindowShouldClose(window)) {
     double time = glfwGetTime();
@@ -130,14 +136,18 @@ int main(int argc, char* argv[]) {
       // fps
       frames++;
       if(time - frameTime >= 1.0) {
+        delete fpsCounter;
+        fpsCounter = fpsFactory(frames);
+
         frames = 0;
         frameTime = time;
       }
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       
-      g->update();
+      g->update(deltaTime);
       g->render();
+      fpsCounter->render();
       
       glfwSwapBuffers(window);
       lastTime = time;
@@ -145,4 +155,8 @@ int main(int argc, char* argv[]) {
   }
   
   return 0;
+}
+
+Text* fpsFactory(int fps) {
+  return new Text(10, 10, ("fps: " + std::to_string(frames)).c_str(), 8);
 }

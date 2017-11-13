@@ -8,13 +8,23 @@
 #include "rect.h"
 #include "sizeHelper.h"
 
+#include "applicationStore.h"
 #include <iostream>
+
+extern ApplicationStore* _STORE;
 
 using namespace glm;
 
 Rect::Rect() {};
 
 Rect::Rect(int x, int y, int width, int height) {
+  this->createShader("assets/shader files/rect.vert", "assets/shader files/rect.frag");
+
+  this->sizeLocation = glGetUniformLocation(this->shaderProgram, "size");  
+  this->borderRadiusLocation = glGetUniformLocation(this->shaderProgram, "borderRadius");
+
+  std::cout << this->sizeLocation << std::endl;
+
   this->setRect(x, y, width, height);
 }
 
@@ -65,7 +75,23 @@ void Rect::setHeight(int height) {
   this->setSize(this->width, height);
 }
 
+void Rect::setBorderRadius(int borderRadius) {
+  this->borderRadius = borderRadius;
+}
+
 void Rect::render() {
+  Drawable::render();
+
+  glUniform1i(this->borderRadiusLocation, this->borderRadius);
+  int size[4] = {
+    this->x, 
+    _STORE->windowHeight - this->y - this->height, // flip y because FragCoord 0,0 is bottom left
+    this->width, 
+    this->height
+  };
+
+  glUniform4iv(this->sizeLocation, 1, size);
+  //std::cout << this->sizeLocation << " " << size[0] << " " << size[1] << " " << size[2] << " " << size[3] << std::endl;
 
   GLuint indices[] {
     0,1,3,

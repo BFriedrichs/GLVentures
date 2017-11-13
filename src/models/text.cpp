@@ -1,35 +1,18 @@
 
 #include <cstring>
+#include <iostream>
 
 #include <GL/glew.h>
 #include <OpenGL/gl.h>
 
 #include "text.h"
 
-Text::Text(int x, int y, const char* text) {
-  const char* vertexShader =
-  "#version 410\n"
-  "in vec3 vp;"
-  "in vec2 vertTexCoord;"
-  "out vec2 fragTexCoord;"
-  "void main() {"
-  "  fragTexCoord = vertTexCoord;"
-  "  gl_Position = vec4(vp, 1.0);"
-  "}";
-  
-  const char* fragmentShader =
-  "#version 410\n"
-  "uniform sampler2D tex;"
-  "in vec2 fragTexCoord;"
-  "out vec4 frag_colour;"
-  "void main() {"
-  "  frag_colour = texture( tex, fragTexCoord );"
-  "}";
-
-  this->createShader(vertexShader, fragmentShader);
+Text::Text(int x, int y, const char* text, int fontSize) {
+  this->createShader("assets/shader files/text.vert", "assets/shader files/text.frag");  
 
   FontHelper f;
   f.loadFont();
+  f.setFontSize(fontSize);
 
   this->textImage = f.renderText(text);
 
@@ -37,11 +20,6 @@ Text::Text(int x, int y, const char* text) {
   int height = this->textImage->po2_height;
 
   this->setRect(x, y, width, height);
-
-  std::cout << "x: " << this->x 
-            << ", y: " << this->y 
-            << ", w: " << this->width
-            << ", h: " << this->height << std::endl;
 
   glActiveTexture(GL_TEXTURE0);
   glGenTextures(1, &this->texture);
@@ -65,7 +43,8 @@ Text::Text(int x, int y, const char* text) {
 }
 
 Text::~Text() {
-
+  delete this->textImage;
+  glDeleteTextures(1, &this->texture);
 }
 
 void Text::render() {

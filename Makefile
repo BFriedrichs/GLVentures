@@ -2,7 +2,7 @@
 OBJS = src/*.cpp src/**/*.cpp
 
 # CC specifies which compiler we're using
-CC = g++
+CC = g++-7
 
 # INCLUDE_PATHS specifies the additional include paths we'll need
 INCLUDE_PATHS = -I/usr/local/include -I/opt/X11/include -Iheader -Iheader/drawables -Iheader/models -Iheader/util -I/usr/local/include/freetype2
