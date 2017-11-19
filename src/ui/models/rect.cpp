@@ -10,8 +10,6 @@
 
 extern ApplicationStore* _STORE;
 
-using namespace glm;
-
 Rect::Rect() : Rect(0, 0, 0, 0) { }
 
 Rect::Rect(int x, int y, int width, int height): _bounds{x, y, width, height} {
@@ -75,6 +73,7 @@ void Rect::removeParent() {
 }
 
 void Rect::calcGlobalBounds() {
+
   int x = this->x;
   int y = this->y;
 

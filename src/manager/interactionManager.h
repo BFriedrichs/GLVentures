@@ -3,38 +3,28 @@
 
 #include <string>
 #include <map>
+
+#include "structs.h"
 #include "rect.h"
-
-enum EVENT_TYPE { cursor, keyboard };
-
-typedef struct {
-  std::string eventName;
-  EVENT_TYPE type;
-} Event;
-
-typedef struct {
-  std::string eventName;
-  EVENT_TYPE type;
-  int globalX;
-  int globalY;
-} CursorEvent;
-
-typedef struct {
-  std::string eventName;
-  EVENT_TYPE type;
-  char key;
-} KeyboardEvent;
+#include "interaction.h"
+#include "interactable.h"
 
 class InteractionManager {
 public:
   InteractionManager();
 
-  void on(std::string eventName, Rect* element);
-  void off(std::string eventName, Rect* element);
+  void on(EVENT_NAME eventName, Interactable* element);
+  void off(EVENT_NAME eventName, Interactable* element);
 
-  void handleEvent(Event* event);
+  void handleEvent(Event& event);
+
+  Point getLastCursorPos();
+  Point getLastMouseDown();
 private:
-  std::map<std::string, Rect*> eventListener;
+  std::map<EVENT_NAME, Interactable*> eventListener;
+
+  Point lastMouseDown = {0, 0};
+  Point lastCursorPos = {0, 0};
 };
 
 #endif

@@ -14,4 +14,5 @@ ApplicationStore* ApplicationStore::getInstance() {
 void ApplicationStore::init() {
   this->fontHelper = new FontHelper();
   this->shader = new ShaderManager();
+  this->interactionManager = new InteractionManager();
 }

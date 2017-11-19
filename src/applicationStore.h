@@ -2,7 +2,9 @@
 #define APPLICATION_STORE_H
 
 #include "util/fontHelper.h"
+
 #include "manager/shaderManager.h"
+#include "manager/interactionManager.h"
 
 class ApplicationStore {
 public:
@@ -13,6 +15,7 @@ public:
 
   FontHelper* fontHelper;
   ShaderManager* shader;
+  InteractionManager* interactionManager;
 
   void init();
 private:

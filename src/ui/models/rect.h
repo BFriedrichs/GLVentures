@@ -5,18 +5,11 @@
 #include <iostream>
 #include <map>
 
+#include "structs.h"
 #include "movable.h"
+#include "interactable.h"
 
-typedef struct {
-  int x;
-  int y;
-  int width;
-  int height;
-} bounds_t;
-
-typedef void (*callback_t)(void*);
-
-class Rect: public Movable {
+class Rect: public Movable, public Interactable {
 
 friend class Movable;
 
@@ -47,9 +40,6 @@ public:
   void setParent(Rect* parent);
   void removeParent();
 
-  void on(std::string eventName, callback_t callback);
-  void off(std::string eventName, callback_t callback);
-
   bounds_t getBounds();
   virtual void calcGlobalBounds();
 protected:
@@ -57,7 +47,6 @@ protected:
   bounds_t _bounds;
 
   Rect* parent = NULL;
-  std::map<std::string, callback_t> eventListener;
 };
 
 #endif

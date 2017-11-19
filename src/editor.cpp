@@ -3,12 +3,14 @@
 #include <iostream>
 #include <string>
 
+#include "applicationStore.h"
+
 #include "ui/graphics/quad.h"
 #include "ui/textInput.h"
 #include "ui/text.h"
 #include "ui/container.h"
 
-int a = 0;
+#include "interaction.h"
 
 Container* cont;
 Text* t1;
@@ -27,7 +29,7 @@ Editor::Editor() {
 
   q1->setBorderRadius(10);
   TextInput* ti = new TextInput();
-  t1 = new Text(L"ghdjfASDerzrtzrz hj fgn fg bdsh dfg dfg dghfgj zjfg hfghfgh");
+  t1 = new Text(L"Hello World!");
   t1->setPosition(100, 100);
   t2 = new Text(L"");
   t2->setPosition(100, 116);
@@ -39,6 +41,15 @@ Editor::Editor() {
   cont->addChild(ti);
   cont->addChild(t1);
   cont->addChild(t2);
+
+  event_callback_t x = [](Event& e) {
+    CursorEvent& ce = (CursorEvent&) e;
+
+    t1->setText(L"Click at " + std::to_wstring(ce.global.x) +  L", " + std::to_wstring(ce.global.y));
+  };
+
+  t1->on(EVENT_NAME::mousedown, x);
+  
 }
 
 Editor::~Editor() {
@@ -50,10 +61,7 @@ void Editor::start() {
 }
 
 void Editor::update(float delta) {
-  a++;
-  if(a == 100) {
-    t1->setText(L"IT WORKS");
-  }
+
 }
 
 void Editor::render() {
@@ -61,7 +69,15 @@ void Editor::render() {
 }
 
 void Editor::cursorUpdate(GLFWwindow* window, double xpos, double ypos) {
+  CursorEvent e(EVENT_NAME::mousemove, xpos, ypos);
+  _STORE->interactionManager->handleEvent(e);
+}
 
+void Editor::cursorAction(GLFWwindow* window, int button, int action, int mods) {
+  if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+    CursorEvent e(EVENT_NAME::mousedown, _STORE->interactionManager->getLastCursorPos());
+    _STORE->interactionManager->handleEvent(e);
+  }
 }
 
 void Editor::charUpdate(GLFWwindow* window, unsigned int character) {

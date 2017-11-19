@@ -12,7 +12,7 @@ public:
   void setText(std::wstring text);
   std::wstring getText();
 private:
-  std::wstring text;
+  std::wstring text = L"";
 };
 
 #endif

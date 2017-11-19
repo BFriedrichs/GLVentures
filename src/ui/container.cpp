@@ -5,6 +5,8 @@
 Container::Container() { }
 
 void Container::addChild(Rect* rect) {
+  this->calcGlobalBounds();
+
   rect->setParent(this);
   this->children.push_back(rect);
 }
@@ -28,17 +30,18 @@ void Container::calcGlobalBounds() {
     r->calcGlobalBounds();
   }
 
-  int x = INT32_MAX;
-  int y = INT32_MAX;
+  int x = this->x;
+  int y = this->y;
   int width = INT32_MIN;
   int height = INT32_MIN;
   
   for(auto const& r: this->children) {
-    x = std::min(x, r->getX());
-    y = std::min(y, r->getY());
-    width = std::max(x + width, r->getX() + r->getWidth());
-    height = std::max(y + height, r->getY() + r->getHeight());
+    width = std::max(width, r->getX() + r->getWidth());
+    height = std::max(height, r->getY() + r->getHeight());
   }
+
+  width = width == INT32_MIN ? 0 : width;
+  height = height == INT32_MIN ? 0 : height;
 
   this->_bounds = {x, y, width, height};
 }

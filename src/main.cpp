@@ -37,6 +37,10 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
   e->cursorUpdate(window, xpos, ypos);
 }
 
+void cursor_action_callback(GLFWwindow* window, int button, int action, int mods) {
+  e->cursorAction(window, button, action, mods);
+}
+
 int main(int argc, char* argv[]) {
 
   if (!glfwInit()) {
@@ -78,6 +82,7 @@ int main(int argc, char* argv[]) {
   glfwSetCursorPosCallback(window, cursor_position_callback);
   glfwSetKeyCallback(window, key_callback);
   glfwSetCharCallback(window, char_callback);
+  glfwSetMouseButtonCallback(window, cursor_action_callback);
 
   /*
   image->generatePNGBuffer(&rowed);

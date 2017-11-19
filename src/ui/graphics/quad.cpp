@@ -5,6 +5,7 @@
 #include <iterator>
 #include <algorithm>
 
+#include "structs.h"
 #include "quad.h"
 #include "sizeHelper.h"
 
@@ -12,8 +13,6 @@
 #include <iostream>
 
 extern ApplicationStore* _STORE;
-
-using namespace glm;
 
 Quad::Quad() : Quad(0, 0, 100, 100) {};
 
@@ -40,8 +39,8 @@ void Quad::setBorderRadius(int borderRadius) {
 void Quad::setVectors() {
   bounds_t globalBounds = this->getBounds();
 
-  vec2 pos = SizeHelper::posToGlobal(vec2(globalBounds.x, globalBounds.y));
-  vec2 size = SizeHelper::sizeToGlobal(vec2(globalBounds.width, globalBounds.height));
+  PointF pos = SizeHelper::posToGlobal(Point{globalBounds.x, globalBounds.y});
+  PointF size = SizeHelper::sizeToGlobal(Point{globalBounds.width, globalBounds.height});
 
   float square[] = {
     pos[0], pos[1] - size[1], 0,

@@ -1,10 +1,10 @@
 #include "sizeHelper.h"
 
-glm::vec2 SizeHelper::sizeToGlobal(glm::vec2 size) {
-  return glm::vec2(size[0] * 2 / WINDOW_WIDTH, size[1] * 2 / WINDOW_HEIGHT);
+PointF SizeHelper::sizeToGlobal(Point size) {
+  return PointF{(float)(size.x) * 2 / WINDOW_WIDTH, (float)(size.y) * 2 / WINDOW_HEIGHT};
 }
 
-glm::vec2 SizeHelper::posToGlobal(glm::vec2 pos) {
-  glm::vec2 newPos = SizeHelper::sizeToGlobal(pos);
-  return glm::vec2(newPos[0] - 1, 1 - newPos[1]);
+PointF SizeHelper::posToGlobal(Point pos) {
+  PointF newPos = SizeHelper::sizeToGlobal(pos);
+  return PointF{newPos.x - 1, 1 - newPos.y};
 }

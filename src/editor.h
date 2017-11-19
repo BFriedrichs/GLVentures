@@ -14,6 +14,7 @@ class Editor {
     void update(float delta);
     void render();
     void cursorUpdate(GLFWwindow* window, double xpos, double ypos);
+    void cursorAction(GLFWwindow* window, int button, int action, int mods);
     void keyUpdate(GLFWwindow* window, int key, int scancode, int action, int mods);
     void charUpdate(GLFWwindow* window, unsigned int character);
 };

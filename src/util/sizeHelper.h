@@ -1,7 +1,7 @@
 #ifndef SIZEHELPER_H
 #define SIZEHELPER_H
 
-#include <glm/vec2.hpp>
+#include "structs.h"
 
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 768
@@ -9,8 +9,8 @@
 
 class SizeHelper {
 public:
-  static glm::vec2 sizeToGlobal(glm::vec2 size);
-  static glm::vec2 posToGlobal(glm::vec2 pos);
+  static PointF sizeToGlobal(Point size);
+  static PointF posToGlobal(Point pos);
 private:
   SizeHelper() {};
 };
