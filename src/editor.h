@@ -1,16 +1,21 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef EDITOR_H
+#define EDITOR_H
 
-class Game {
+#include <GL/glew.h>
+#include <OpenGL/gl.h>
+#include <GLFW/glfw3.h>
+
+class Editor {
   public:
-    Game();
-    ~Game();
+    Editor();
+    ~Editor();
 
     void start();
     void update(float delta);
     void render();
     void cursorUpdate(GLFWwindow* window, double xpos, double ypos);
     void keyUpdate(GLFWwindow* window, int key, int scancode, int action, int mods);
+    void charUpdate(GLFWwindow* window, unsigned int character);
 };
 
 #endif

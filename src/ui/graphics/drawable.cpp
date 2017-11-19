@@ -1,13 +1,14 @@
-#include <cstring>
-
 #include "drawable.h"
-#include "shader.h"
+
+#include <cstring>
+#include "applicationStore.h"
 
 Drawable::Drawable() {
+
 }
 
-void Drawable::createShader(const char* vertexShader, const char* fragmentShader) {
-  this->shaderProgram = LoadShader(vertexShader, fragmentShader, this->getShaderMixins());
+void Drawable::linkShader() {
+  this->shaderProgram = _STORE->shader->getShader(this->getShaderType());
 
   this->alphaLocation = glGetUniformLocation(this->shaderProgram, "alpha");  
   this->colorLocation = glGetUniformLocation(this->shaderProgram, "color");

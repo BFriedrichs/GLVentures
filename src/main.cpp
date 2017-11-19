@@ -11,8 +11,8 @@
 
 #include "applicationStore.h"
 
-#include "text.h"
-#include "game.h"
+#include "editor.h"
+#include "ui/text.h"
 
 const double maxFPS = 60.0;
 const double maxPeriod = 1.0 / maxFPS;
@@ -23,14 +23,18 @@ int frames = 0;
 Text* fpsFactory(int fps);
 
 ApplicationStore* _STORE = ApplicationStore::getInstance();
-Game* g;
+Editor* e;
+
+void char_callback(GLFWwindow* window, unsigned int character) {
+  e->charUpdate(window, character);
+}
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  g->keyUpdate(window, key, scancode, action, mods);
+  e->keyUpdate(window, key, scancode, action, mods);
 }
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
-  g->cursorUpdate(window, xpos, ypos);
+  e->cursorUpdate(window, xpos, ypos);
 }
 
 int main(int argc, char* argv[]) {
@@ -62,15 +66,18 @@ int main(int argc, char* argv[]) {
       return -1;
   }
 
+  _STORE->init();
+
   glClearColor(0.4f, 0.4f, 0.4f, 0.0f);
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  g = new Game();
+  e = new Editor();
 
   glfwSetCursorPosCallback(window, cursor_position_callback);
   glfwSetKeyCallback(window, key_callback);
+  glfwSetCharCallback(window, char_callback);
 
   /*
   image->generatePNGBuffer(&rowed);
@@ -124,7 +131,7 @@ int main(int argc, char* argv[]) {
   fclose(fp);
   */
   
-  Text* fpsCounter = fpsFactory(60);
+  Text* fpsCounter = new Text(L"fps: " + std::to_wstring(frames));
 
   while(!glfwWindowShouldClose(window)) {
     double time = glfwGetTime();
@@ -136,8 +143,8 @@ int main(int argc, char* argv[]) {
       // fps
       frames++;
       if(time - frameTime >= 1.0) {
-        delete fpsCounter;
-        fpsCounter = fpsFactory(frames);
+        //delete fpsCounter;
+        fpsCounter->setText(L"fps: " + std::to_wstring(frames));
 
         frames = 0;
         frameTime = time;
@@ -145,8 +152,8 @@ int main(int argc, char* argv[]) {
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       
-      g->update(deltaTime);
-      g->render();
+      e->update(deltaTime);
+      e->render();
       fpsCounter->render();
       
       glfwSwapBuffers(window);
@@ -155,8 +162,4 @@ int main(int argc, char* argv[]) {
   }
   
   return 0;
-}
-
-Text* fpsFactory(int fps) {
-  return new Text(10, 10, ("fps: " + std::to_string(frames)).c_str(), 8);
 }

@@ -5,7 +5,7 @@
 #include <iterator>
 #include <algorithm>
 
-#include "rect.h"
+#include "quad.h"
 #include "sizeHelper.h"
 
 #include "applicationStore.h"
@@ -15,31 +15,33 @@ extern ApplicationStore* _STORE;
 
 using namespace glm;
 
-Rect::Rect() {};
+Quad::Quad() : Quad(0, 0, 100, 100) {};
 
-Rect::Rect(int x, int y, int width, int height) {
-  this->createShader("assets/shader files/rect.vert", "assets/shader files/rect.frag");
+Quad::Quad(int x, int y, int width, int height) : Rect(x, y, width, height) {
+  this->linkShader();
 
-  this->sizeLocation = glGetUniformLocation(this->shaderProgram, "size");  
+  this->sizeLocation = glGetUniformLocation(this->shaderProgram, "size");
   this->borderRadiusLocation = glGetUniformLocation(this->shaderProgram, "borderRadius");
-
-  std::cout << this->sizeLocation << std::endl;
-
-  this->setRect(x, y, width, height);
 }
 
-Rect::~Rect() {
+Quad::~Quad() {
 
 }
 
-void Rect::setRect(int x, int y, int width, int height) {
-  this->x = x;
-  this->y = y;
-  this->width = width;
-  this->height = height;
+void Quad::setRect(int x, int y, int width, int height) {
+  Rect::setRect(x, y, width, height);
+  this->setVectors();
+}
 
-  vec2 pos = SizeHelper::posToGlobal(vec2(x, y));
-  vec2 size = SizeHelper::sizeToGlobal(vec2(width, height));
+void Quad::setBorderRadius(int borderRadius) {
+  this->borderRadius = borderRadius;
+}
+
+void Quad::setVectors() {
+  bounds_t globalBounds = this->getBounds();
+
+  vec2 pos = SizeHelper::posToGlobal(vec2(globalBounds.x, globalBounds.y));
+  vec2 size = SizeHelper::sizeToGlobal(vec2(globalBounds.width, globalBounds.height));
 
   float square[] = {
     pos[0], pos[1] - size[1], 0,
@@ -51,35 +53,12 @@ void Rect::setRect(int x, int y, int width, int height) {
   std::memcpy(this->vectors, square, sizeof(float) * 12);
 }
 
-void Rect::setPosition(int x, int y) {
-  this->setRect(x, y, this->width, this->height);
+void Quad::calcGlobalBounds() {
+  Rect::calcGlobalBounds();
+  this->setVectors();
 }
 
-void Rect::setSize(int width, int height) {
-  this->setRect(this->x, this->y, width, height);
-}
-
-void Rect::setX(int x) {
-  this->setPosition(x, this->y);
-}
-
-void Rect::setY(int y) {
-  this->setPosition(this->x, y);
-}
-
-void Rect::setWidth(int width) {
-  this->setSize(width, this->height);
-}
-
-void Rect::setHeight(int height) {
-  this->setSize(this->width, height);
-}
-
-void Rect::setBorderRadius(int borderRadius) {
-  this->borderRadius = borderRadius;
-}
-
-void Rect::render() {
+void Quad::render() {
   Drawable::render();
 
   glUniform1i(this->borderRadiusLocation, this->borderRadius);

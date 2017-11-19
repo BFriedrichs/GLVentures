@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <vector>
 #include <iostream>
+#include <map>
+#include <stdlib.h>
 
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
@@ -22,7 +24,7 @@ typedef struct {
 } pixel;
 
 typedef struct {
-  char charcode;
+  wchar_t charcode;
   int x;
   int y;
   int w;
@@ -39,6 +41,7 @@ public:
   int po2_height;
   pixel* image_data;
   letter* letters;
+  unsigned int texture;
 
   TextImage();
   ~TextImage();
@@ -53,12 +56,19 @@ public:
   FT_Face* face; 
   int fontSize = 16;
 
+  std::wstring _CACHED_CHARS;
+  std::map<wchar_t, TextImage*> fontCache;
+
   FontHelper();
   ~FontHelper();
 
+  void generateCache(std::wstring s);
+  TextImage* getTextureForChar(wchar_t c);
+
   void loadFont();
   void setFontSize(int size);
-  TextImage* renderText(const char* string);
+  TextImage* renderText(std::string string);
+  TextImage* renderChar(wchar_t code);
 };
 
 #endif

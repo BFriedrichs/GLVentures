@@ -1,13 +1,11 @@
 #ifndef DRAWABLE_H
 #define DRAWABLE_H
 
-#include <vector>
 #include <string>
 #include <iostream>
+
 #include <GL/glew.h>
 #include <OpenGL/gl.h>
-
-#include "mixins.h"
 
 class Drawable {
 public:
@@ -15,13 +13,12 @@ public:
 
   void setColor(const float color[]);
   void setAlpha(const float alpha);  
-  void createShader(const char* vertexShader, const char* fragmentShader);
+  void linkShader();
 
 protected:
-  virtual std::vector<std::string> getShaderMixins() { return std::vector<std::string> { MIXIN_ALPHA, MIXIN_COLOR }; };
+  virtual std::string getShaderType() { return "rect"; };
 
   GLuint shaderProgram = 0;
-
   GLint alphaLocation = 0;
   GLint colorLocation = 0;
   

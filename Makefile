@@ -1,11 +1,11 @@
 # OBJS specifies which files to compile as part of the project
-OBJS = src/*.cpp src/**/*.cpp
+OBJS = src/*.cpp src/**/*.cpp src/**/**/*.cpp
 
 # CC specifies which compiler we're using
 CC = g++-7
 
 # INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -I/usr/local/include -I/opt/X11/include -Iheader -Iheader/drawables -Iheader/models -Iheader/util -I/usr/local/include/freetype2
+INCLUDE_PATHS = -I/usr/local/include -I/opt/X11/include -Isrc -Isrc/ui/models -Isrc/util -I/usr/local/include/freetype2
 
 # LIBRARY_PATHS specifies the additional library paths we'll need
 LIBRARY_PATHS = -L/usr/local/lib -I/opt/X11/lib

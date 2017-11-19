@@ -6,9 +6,13 @@
 #include <vector>
 #include <algorithm>
 
-#include "shader.h"
+#include "shaderManager.h"
 
-std::string readFile(const char *filePath) {
+ShaderManager::ShaderManager() {
+  this->LoadAllShaders();
+}
+
+std::string ShaderManager::readFile(const char *filePath) {
   std::string content;
   std::ifstream fileStream(filePath, std::ios::in);
 
@@ -29,12 +33,13 @@ std::string readFile(const char *filePath) {
 
 #define SHADER_VERSION "#version 400"
 
-void updateShaderWithMixins(std::string& shaderString, std::vector<std::string> mixins) {
+void ShaderManager::updateShaderWithMixins(std::string& shaderString) {
   std::string mixinShader = SHADER_VERSION "\n";
 
   //load main shader
   std::string mainShader = readFile("assets/shader files/main.frag");  
 
+  std::vector<std::string> mixins = {"alpha", "color", "borderRadius"};
   for(auto const& mixin: mixins) {
     std::string path = "assets/shader files/mixins/" + mixin + ".frag";
     std::string currMixin = readFile(path.c_str());
@@ -45,7 +50,7 @@ void updateShaderWithMixins(std::string& shaderString, std::vector<std::string> 
   shaderString = mixinShader + shaderString + mainShader;
 }
 
-GLuint LoadShader(const char *vertex_path, const char *fragment_path, std::vector<std::string> mixins) {
+GLuint ShaderManager::LoadShader(const char *vertex_path, const char *fragment_path) {
   GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
   GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
   GLuint fragShader2 = glCreateShader(GL_FRAGMENT_SHADER);
@@ -54,7 +59,7 @@ GLuint LoadShader(const char *vertex_path, const char *fragment_path, std::vecto
   std::string vertShaderStr = readFile(vertex_path);
   std::string fragShaderStr = readFile(fragment_path);
 
-  updateShaderWithMixins(fragShaderStr, mixins);
+  updateShaderWithMixins(fragShaderStr);
 
   const char *vertShaderSrc = vertShaderStr.c_str();
   const char *fragShaderSrc = fragShaderStr.c_str();
@@ -102,4 +107,13 @@ GLuint LoadShader(const char *vertex_path, const char *fragment_path, std::vecto
   glDeleteShader(fragShader);
 
   return program;
+}
+
+void ShaderManager::LoadAllShaders() {
+  _SHADERS.insert(std::pair<std::string, GLuint> ("text", LoadShader("assets/shader files/text.vert", "assets/shader files/text.frag")));
+  _SHADERS.insert(std::pair<std::string, GLuint> ("rect", LoadShader("assets/shader files/rect.vert", "assets/shader files/rect.frag")));
+}
+
+GLuint ShaderManager::getShader(std::string shader) {
+  return _SHADERS[shader];
 }
