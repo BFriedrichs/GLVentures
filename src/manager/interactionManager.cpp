@@ -20,36 +20,49 @@ Point InteractionManager::getLastMouseDown() {
   return this->lastMouseDown;
 }
 
+void InteractionManager::_internalHandleCursorEvent(CursorEvent& event) {
+  for(auto const &entry : this->eventListener) {
+    if(event.eventName == entry.first) {
+      // unhappy about this but currently best way to create the relation
+      Rect* rect = dynamic_cast<Rect*>(entry.second);
+      bounds_t bounds = rect->getBounds();
+
+      event.local = Point{event.global.x - bounds.x, event.global.y - bounds.y};
+
+      if(bounds.contains(event.global)) {
+        if(event.eventName == EVENT_NAME::mousedown || event.eventName == EVENT_NAME::mouseup || event.eventName == EVENT_NAME::click) {
+          entry.second->handleEvent(event);
+        }
+      } else if(event.eventName == EVENT_NAME::mousedownoutside || event.eventName == EVENT_NAME::mouseupoutside) {
+        entry.second->handleEvent(event);
+      }
+    }
+  }
+}
+
 void InteractionManager::handleEvent(Event& event) {
   switch(event.type) {
     case cursor:
       {
         CursorEvent &ce = (CursorEvent&) event;
 
-        CursorEvent* clickEvent = NULL;
-        if(ce.eventName == EVENT_NAME::mouseup && lastMouseDown.x == ce.global.x && lastMouseDown.y == ce.global.x) {
-          // create click event
-          clickEvent = new CursorEvent(EVENT_NAME::click, ce.global.x, ce.global.x);
-        }
-
-        for(auto const &entry : this->eventListener) {
-          if(ce.eventName == entry.first) {
-            // unhappy about this but currently best way to create the relation
-            Rect* rect = dynamic_cast<Rect*>(entry.second);
-            bounds_t bounds = rect->getBounds();
-
-            if(bounds.contains(ce.global)) {
-              entry.second->handleEvent(ce);
-
-              if(clickEvent != NULL) {
-                entry.second->handleEvent(*clickEvent);
-              }
-            }
+        this->_internalHandleCursorEvent(ce);
+        
+        if(ce.eventName == EVENT_NAME::mousedown || ce.eventName == EVENT_NAME::mouseup) {
+          EVENT_NAME outsideName = EVENT_NAME::mousedownoutside;
+          if(ce.eventName == EVENT_NAME::mouseup) {
+            outsideName = EVENT_NAME::mouseupoutside;
           }
-        }
 
-        if(clickEvent != NULL) {
-          //delete clickEvent;
+          CursorEvent outsideEvent(outsideName, ce.global);
+          this->_internalHandleCursorEvent(outsideEvent);
+        }
+        
+
+        if(ce.eventName == EVENT_NAME::mouseup && lastMouseDown.x == ce.global.x && lastMouseDown.y == ce.global.y) {
+          // create click event
+          CursorEvent clickEvent(EVENT_NAME::click, ce.global);
+          this->_internalHandleCursorEvent(clickEvent);
         }
 
         if(ce.eventName == EVENT_NAME::mousedown) {
@@ -63,7 +76,13 @@ void InteractionManager::handleEvent(Event& event) {
       break;
     case keyboard:
       {
-
+        KeyboardEvent &ke = (KeyboardEvent&) event;
+        
+        for(auto const &entry : this->eventListener) {
+          if(ke.eventName == entry.first) {
+            entry.second->handleEvent(ke);
+          }
+        }
       }
       break;
     default:

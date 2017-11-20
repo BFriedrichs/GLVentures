@@ -2,7 +2,9 @@
 
 #include "applicationStore.h"
 
-Interactable::Interactable() {};
+Interactable::Interactable() {
+  
+};
 
 Interactable::~Interactable() {
 
@@ -20,6 +22,6 @@ void Interactable::off(EVENT_NAME eventName) {
 void Interactable::handleEvent(Event& event) {
   auto c = this->eventListener.find(event.eventName);
   if(c != this->eventListener.end()) {
-    c->second(event);
+    c->second(event, this);
   }
 }

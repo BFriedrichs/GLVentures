@@ -21,6 +21,9 @@ public:
   Point getLastCursorPos();
   Point getLastMouseDown();
 private:
+
+  void _internalHandleCursorEvent(CursorEvent& event);
+
   std::map<EVENT_NAME, Interactable*> eventListener;
 
   Point lastMouseDown = {0, 0};

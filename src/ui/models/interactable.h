@@ -9,8 +9,8 @@ class Interactable {
 public:
   Interactable();
   virtual ~Interactable();
-  void on(EVENT_NAME eventName, event_callback_t callback);
-  void off(EVENT_NAME eventName);
+  virtual void on(EVENT_NAME eventName, event_callback_t callback);
+  virtual void off(EVENT_NAME eventName);
 
   void handleEvent(Event& event);
 private:

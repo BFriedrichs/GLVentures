@@ -14,7 +14,7 @@ public:
   Rect* getChildAt(int i);
   int length();
 
-  void render();
+  virtual void render();
   virtual void calcGlobalBounds();
 
   void handleEvent();

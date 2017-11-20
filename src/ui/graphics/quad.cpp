@@ -59,13 +59,14 @@ void Quad::calcGlobalBounds() {
 
 void Quad::render() {
   Drawable::render();
-
+  
   glUniform1i(this->borderRadiusLocation, this->borderRadius);
+  bounds_t b = this->getBounds();
   int size[4] = {
-    this->x, 
-    _STORE->windowHeight - this->y - this->height, // flip y because FragCoord 0,0 is bottom left
-    this->width, 
-    this->height
+    b.x, 
+    _STORE->windowHeight - b.y - b.height, // flip y because FragCoord 0,0 is bottom left
+    b.width, 
+    b.height
   };
 
   glUniform4iv(this->sizeLocation, 1, size);

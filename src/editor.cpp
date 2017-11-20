@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <stdlib.h>
 
 #include "applicationStore.h"
 
@@ -14,7 +15,6 @@
 
 Container* cont;
 Text* t1;
-Text* t2;
 
 Editor::Editor() {
   Quad* q1 = new Quad(200, 200, 50, 50);
@@ -29,26 +29,31 @@ Editor::Editor() {
 
   q1->setBorderRadius(10);
   TextInput* ti = new TextInput();
+  ti->setPosition(100, 150);
   t1 = new Text(L"Hello World!");
   t1->setPosition(100, 100);
-  t2 = new Text(L"");
-  t2->setPosition(100, 116);
 
   cont = new Container();
-  cont->addChild(q1);
-  cont->addChild(q2);
+
+  Container* cont2 = new Container();
+  cont2->setPosition(50, 50);
+  
+  cont2->addChild(q2);
+  cont2->addChild(q1);
+
   cont->addChild(q3);
+  cont->addChild(cont2);
   cont->addChild(ti);
   cont->addChild(t1);
-  cont->addChild(t2);
-
-  event_callback_t x = [](Event& e) {
+  
+  event_callback_t x = [](Event& e, void* i) {
     CursorEvent& ce = (CursorEvent&) e;
 
-    t1->setText(L"Click at " + std::to_wstring(ce.global.x) +  L", " + std::to_wstring(ce.global.y));
+    t1->setText(L"Click at " + std::to_wstring(ce.local.x) +  L", " + std::to_wstring(ce.local.y));
   };
 
-  t1->on(EVENT_NAME::mousedown, x);
+  t1->on(EVENT_NAME::click, x);
+  
   
 }
 
@@ -74,14 +79,24 @@ void Editor::cursorUpdate(GLFWwindow* window, double xpos, double ypos) {
 }
 
 void Editor::cursorAction(GLFWwindow* window, int button, int action, int mods) {
-  if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-    CursorEvent e(EVENT_NAME::mousedown, _STORE->interactionManager->getLastCursorPos());
-    _STORE->interactionManager->handleEvent(e);
+  EVENT_NAME name = EVENT_NAME::__default;
+
+  if (button == GLFW_MOUSE_BUTTON_LEFT) {
+    if(action == GLFW_PRESS) {
+      name = EVENT_NAME::mousedown;
+    } else if(action == GLFW_RELEASE) {
+      name = EVENT_NAME::mouseup;
+    }
   }
+
+  CursorEvent e(name, _STORE->interactionManager->getLastCursorPos());
+  _STORE->interactionManager->handleEvent(e);
 }
 
 void Editor::charUpdate(GLFWwindow* window, unsigned int character) {
-  t2->setText(t2->getText() + std::wstring(1, (wchar_t) character));
+  // for now only keydown is supported
+  KeyboardEvent e(EVENT_NAME::keydown, character);
+  _STORE->interactionManager->handleEvent(e);
 }
 
 void Editor::keyUpdate(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -89,38 +104,22 @@ void Editor::keyUpdate(GLFWwindow* window, int key, int scancode, int action, in
     return glfwGetKey(window, keyCode);
   };
 
-  if(key == GLFW_KEY_BACKSPACE && action == GLFW_PRESS) {
-    t2->setText(t2->getText().substr(0, t2->getText().size() - 1));
-  }
-/*
-  if(action == GLFW_RELEASE) {
-    if(key == GLFW_KEY_D && getKey(GLFW_KEY_A) != GLFW_PRESS) {
-      r->setAccelerationX(0);
-    }
-    if(key == GLFW_KEY_W && getKey(GLFW_KEY_S) != GLFW_PRESS) {
-      r->setAccelerationY(0);
-    }
-    if(key == GLFW_KEY_A && getKey(GLFW_KEY_D) != GLFW_PRESS) {
-      r->setAccelerationX(0);
-    }
-    if(key == GLFW_KEY_S && getKey(GLFW_KEY_W) != GLFW_PRESS) {
-      r->setAccelerationY(0);
-    }
+  EVENT_NAME name = EVENT_NAME::__default;
+
+  if(action == GLFW_PRESS || action == GLFW_REPEAT) {
+    name = EVENT_NAME::keydown;
+  } else if(action == GLFW_RELEASE) {
+    name = EVENT_NAME::keyup;
   }
 
-  if(action == GLFW_PRESS) {
-    if(key == GLFW_KEY_D) {
-      r->setAccelerationX(100);
-    }
-    if(key == GLFW_KEY_W) {
-      r->setAccelerationY(-100);
-    }
-    if(key == GLFW_KEY_A) {
-      r->setAccelerationX(-100);
-    }
-    if(key == GLFW_KEY_S) {
-      r->setAccelerationY(100);
-    }
+  switch(key) {
+    case GLFW_KEY_BACKSPACE:
+    case GLFW_KEY_ENTER:
+    case GLFW_KEY_TAB:
+      {
+        KeyboardEvent e(name, key, action, mods);
+        _STORE->interactionManager->handleEvent(e);
+      }
+    break;
   }
-  */
 }

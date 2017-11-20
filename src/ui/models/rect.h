@@ -9,7 +9,7 @@
 #include "movable.h"
 #include "interactable.h"
 
-class Rect: public Movable, public Interactable {
+class Rect: public Movable, public virtual Interactable {
 
 friend class Movable;
 

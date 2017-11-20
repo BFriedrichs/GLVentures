@@ -5,12 +5,12 @@ vec4 shader() {
     COLOR_MIXIN(__outputColor);
   #endif
 
-  #ifdef ALPHA_MIXIN
-    ALPHA_MIXIN(__outputColor);
-  #endif
-
   #ifdef BORDER_RADIUS_MIXIN
     BORDER_RADIUS_MIXIN(__outputColor);
+  #endif
+
+  #ifdef ALPHA_MIXIN
+    ALPHA_MIXIN(__outputColor);
   #endif
 
   return __outputColor;

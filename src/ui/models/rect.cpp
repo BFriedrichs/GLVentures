@@ -27,6 +27,9 @@ void Rect::setRect(int x, int y, int width, int height) {
   this->height = height;
 
   this->calcGlobalBounds();
+  if(parent != NULL) {
+    parent->calcGlobalBounds();
+  }
 }
 
 void Rect::setPosition(int x, int y) {
@@ -73,14 +76,15 @@ void Rect::removeParent() {
 }
 
 void Rect::calcGlobalBounds() {
-
   int x = this->x;
   int y = this->y;
 
   Rect* parent = this->parent;
-  if(parent != NULL) {
+  while(parent != NULL) {
     x += parent->getX();
     y += parent->getY();
+  
+    parent = parent->getParent();
   }
 
   this->_bounds = {x, y, this->width, this->height};
