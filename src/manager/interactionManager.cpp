@@ -5,11 +5,26 @@
 InteractionManager::InteractionManager() {};
 
 void InteractionManager::on(EVENT_NAME eventName, Interactable* element) {
-  this->eventListener.insert(std::pair<EVENT_NAME, Interactable*>(eventName, element));
+  auto it = this->eventListener.find(eventName);
+  if(it != this->eventListener.end()) {
+    it->second.push_back(element);
+  } else {
+    std::vector<Interactable*> v;
+    v.push_back(element);
+    this->eventListener.insert(std::pair<EVENT_NAME, std::vector<Interactable*>>(eventName, v));
+  }
 }
 
 void InteractionManager::off(EVENT_NAME eventName, Interactable* element) {
-  
+  auto it = this->eventListener.find(eventName);
+
+  if(it != this->eventListener.end()) {
+    std::vector<Interactable*> interactables = it->second;
+    auto itVec = std::find(interactables.begin(), interactables.end(), element);
+    if(itVec != interactables.end()) {
+      interactables.erase(itVec);
+    }
+  }
 }
 
 Point InteractionManager::getLastCursorPos() {
@@ -23,18 +38,21 @@ Point InteractionManager::getLastMouseDown() {
 void InteractionManager::_internalHandleCursorEvent(CursorEvent& event) {
   for(auto const &entry : this->eventListener) {
     if(event.eventName == entry.first) {
-      // unhappy about this but currently best way to create the relation
-      Rect* rect = dynamic_cast<Rect*>(entry.second);
-      bounds_t bounds = rect->getBounds();
+      
+      for(auto const& currEntry: entry.second) {
+         // unhappy about this but currently best way to create the relation
+        Rect* rect = dynamic_cast<Rect*>(currEntry);
+        bounds_t bounds = rect->getBounds();
 
-      event.local = Point{event.global.x - bounds.x, event.global.y - bounds.y};
+        event.local = Point{event.global.x - bounds.x, event.global.y - bounds.y};
 
-      if(bounds.contains(event.global)) {
-        if(event.eventName == EVENT_NAME::mousedown || event.eventName == EVENT_NAME::mouseup || event.eventName == EVENT_NAME::click) {
-          entry.second->handleEvent(event);
+        if(bounds.contains(event.global)) {
+          if(event.eventName == EVENT_NAME::mousedown || event.eventName == EVENT_NAME::mouseup || event.eventName == EVENT_NAME::click) {
+            currEntry->handleEvent(event);
+          }
+        } else if(event.eventName == EVENT_NAME::mousedownoutside || event.eventName == EVENT_NAME::mouseupoutside) {
+          currEntry->handleEvent(event);
         }
-      } else if(event.eventName == EVENT_NAME::mousedownoutside || event.eventName == EVENT_NAME::mouseupoutside) {
-        entry.second->handleEvent(event);
       }
     }
   }
@@ -80,7 +98,9 @@ void InteractionManager::handleEvent(Event& event) {
         
         for(auto const &entry : this->eventListener) {
           if(ke.eventName == entry.first) {
-            entry.second->handleEvent(ke);
+            for(auto const& currEntry: entry.second) {
+              currEntry->handleEvent(ke);
+            }
           }
         }
       }

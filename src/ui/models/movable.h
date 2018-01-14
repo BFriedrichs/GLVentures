@@ -1,10 +1,7 @@
 #ifndef MOVABLE_H
 #define MOVABLE_H
 
-typedef struct {
-  float x;
-  float y;
-} vec2f;
+#include "structs.h"
 
 class Movable {
 public:

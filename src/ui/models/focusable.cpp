@@ -11,8 +11,11 @@ Focusable::~Focusable() {
 }
 
 void Focusable::setFocused(bool isFocused) {
-  this->_isFocused = isFocused;
-  this->focusChanged(isFocused);
+  std::cout << "click" << std::endl;
+  if(this->_isFocused != isFocused) {
+    this->_isFocused = isFocused;
+    this->focusChanged(isFocused);
+  }
 }
 
 void Focusable::toggleFocus() {

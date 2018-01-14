@@ -16,7 +16,11 @@ void Interactable::on(EVENT_NAME eventName, event_callback_t callback) {
 }
 
 void Interactable::off(EVENT_NAME eventName) {
-  _STORE->interactionManager->on(eventName, this);
+  _STORE->interactionManager->off(eventName, this);
+  auto it = this->eventListener.find(eventName);
+  if(it != this->eventListener.end()) {
+    this->eventListener.erase(it);
+  }
 }
 
 void Interactable::handleEvent(Event& event) {

@@ -4,6 +4,12 @@
 
 Container::Container() { }
 
+Container::~Container() {
+  for(auto const& r: this->children) {
+    delete r;
+  }
+}
+
 void Container::addChild(Rect* rect) {
   this->calcGlobalBounds();
 

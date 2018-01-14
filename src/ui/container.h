@@ -8,6 +8,7 @@
 class Container : public Rect {
 public:
   Container();
+  ~Container();
 
   void addChild(Rect* rect);
   void removeAllChilds();

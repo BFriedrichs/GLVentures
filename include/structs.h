@@ -10,7 +10,7 @@ typedef struct {
   int operator[](int i) {
     return i == 0 ? x : i == 1 ? y : -1;
   }
-} Point;
+} Point, vec2;
 
 typedef struct {
   float x;
@@ -19,7 +19,7 @@ typedef struct {
   float operator[](int i) {
     return i == 0 ? x : i == 1 ? y : -1;
   }
-} PointF;
+} PointF, vec2f;
 
 typedef struct {
   int x;

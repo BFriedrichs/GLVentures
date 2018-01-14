@@ -9,10 +9,10 @@
 #include "graphics/quad.h"
 
 class TextInput: public Container, public Focusable {
-  using Container::Interactable;
-
+  
 public:
   TextInput();
+  TextInput(std::wstring text);
   ~TextInput();
 
   void setText(std::wstring text);

@@ -1,29 +1,25 @@
 #ifndef TEXTAREA_H
 #define TEXTAREA_H
-/*
+
 #include <string>
-#include <gdm>
 #include <vector>
 
-class TextLine {
+#include "container.h"
+#include "structs.h"
+#include "textInput.h"
+
+
+class TextArea: public Container {
 public:
-  TextLine(std::string line);
+  TextArea(std::wstring text);
+  ~TextArea();
 
-  void render();
+  vec2 selectionStart;
+  vec2 selectionEnd;
 
-  std::string line;
-}
-
-class TextArea {
-public:
-  TextArea();
-
-  gdm::vec2<int> selectionStart;
-  gdm::vec2<int> selectionEnd;
-
-  std::vector<std::string> text;
-  void render();
+  std::vector<TextInput*> lines;
+  std::wstring text;
 };
-*/
+
 
 #endif

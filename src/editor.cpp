@@ -8,6 +8,7 @@
 
 #include "ui/graphics/quad.h"
 #include "ui/textInput.h"
+#include "ui/textArea.h"
 #include "ui/text.h"
 #include "ui/container.h"
 
@@ -28,7 +29,12 @@ Editor::Editor() {
   q3->setColor(color2);
 
   q1->setBorderRadius(10);
-  TextInput* ti = new TextInput();
+  TextInput* ti = new TextInput(L"TextInput");
+  ti->setPosition(100, 150);
+
+  TextArea* ta = new TextArea(L"TextArea");
+  ta->setPosition(100, 250);
+
   ti->setPosition(100, 150);
   t1 = new Text(L"Hello World!");
   t1->setPosition(100, 100);
@@ -45,6 +51,7 @@ Editor::Editor() {
   cont->addChild(cont2);
   cont->addChild(ti);
   cont->addChild(t1);
+  cont->addChild(ta);
   
   event_callback_t x = [](Event& e, void* i) {
     CursorEvent& ce = (CursorEvent&) e;

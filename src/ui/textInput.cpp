@@ -9,10 +9,11 @@ TextInput::TextInput() {
   this->cursor = new Quad(0, 0, 2, 16);
   this->addChild(this->cursor);
 
-  this->on(EVENT_NAME::keydown, (event_callback_t) TextInput::onInput);
-
-  this->setText(L"TESTET");
   this->focusChanged(false);
+}
+
+TextInput::TextInput(std::wstring text): TextInput() {
+  this->setText(text);
 }
 
 TextInput::~TextInput() {
@@ -31,8 +32,10 @@ void TextInput::setText(std::wstring text) {
 void TextInput::focusChanged(bool isFocused) {
   if(isFocused) {
     this->cursor->setAlpha(1);
+    this->on(EVENT_NAME::keydown, (event_callback_t) TextInput::onInput);
   } else {
     this->cursor->setAlpha(0);
+    this->off(EVENT_NAME::keydown);
   }
 }
 
@@ -41,6 +44,7 @@ std::wstring TextInput::getText() {
 }
 
 void TextInput::onInput(Event& e, Interactable* instance) {
+  std::cout << "input" << std::endl;
   TextInput* i = dynamic_cast<TextInput*>(instance);
 
   if(i->isFocused()) {

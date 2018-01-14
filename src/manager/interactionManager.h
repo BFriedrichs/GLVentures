@@ -3,6 +3,8 @@
 
 #include <string>
 #include <map>
+#include <vector>
+#include <algorithm>
 
 #include "structs.h"
 #include "rect.h"
@@ -24,7 +26,7 @@ private:
 
   void _internalHandleCursorEvent(CursorEvent& event);
 
-  std::map<EVENT_NAME, Interactable*> eventListener;
+  std::map<EVENT_NAME, std::vector<Interactable*>> eventListener;
 
   Point lastMouseDown = {0, 0};
   Point lastCursorPos = {0, 0};
